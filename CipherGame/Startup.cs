@@ -51,6 +51,18 @@ namespace CipherGame
 
             app.UseHttpsRedirection();
 
+            app.Use(async (context, next) =>
+            {
+                context.Response.OnStarting(() =>
+                {
+                    context.Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+                    context.Response.Headers.Add("Pragma", "no-cache"); // HTTP 1.0.
+                    context.Response.Headers.Add("Expires", "0"); // Proxies.
+                    return Task.FromResult(0);
+                });
+                await next();
+            });
+
             app.UseMvc();
         }
     }
