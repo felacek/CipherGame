@@ -26,12 +26,6 @@ namespace CipherGame
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-        //    services.AddEntityFrameworkSqlite()
-        //    //.AddSqlite()
-        //    .AddDbContext<CipherGameData.CipherGameContext>(
-        //        options => { options.UseSqlite($"Data Source=CipherGame.db"); });
-
-
             services.AddScoped<CipherGameData.CipherGameContext, CipherGameData.CipherGameContext>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -39,7 +33,7 @@ namespace CipherGame
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-
+            app.UseStaticFiles();
             using (var client = new CipherGameData.CipherGameContext())
             {
                 client.Database.EnsureCreated();
@@ -52,11 +46,10 @@ namespace CipherGame
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                // app.UseHsts();
+                app.UseHsts();
             }
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }

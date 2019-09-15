@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace CipherGame.Models
 {
@@ -11,5 +8,17 @@ namespace CipherGame.Models
         public string CipherCode { get; set; }
         public bool IsPlaceFound { get; set; }
         public string TeamName { get; set; }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append($"{{ teamName: {TeamName}");
+            sb.Append($", cipherCode: {CipherCode}");
+            sb.Append($", isPlaceFound: {IsPlaceFound}");
+            sb.Append($", message: {Message} }}");
+
+            return sb.ToString();
+        }
     }
 }

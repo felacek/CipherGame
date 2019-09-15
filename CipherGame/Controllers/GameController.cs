@@ -23,45 +23,94 @@ namespace CipherGame.Controllers
         {
             await LogActivity(teamCode, $"GetTeamState(teamCode:{teamCode})");
 
-            var (state, errorModel) = GetFirstUnresolvedState(teamCode);
+
+            try
+            {
+                var (state, errorModel) = GetFirstUnresolvedState(teamCode);
+                await LogActivity(teamCode, $"GetTeamState returns: {errorModel}");
+
+                // we dont send cipherCode on this place
+                errorModel.CipherCode = string.Empty;
+                return errorModel;
+            }
+            catch(Exception exc)
+            {
+                await LogActivity(teamCode, $"Exception: {exc}");
+
+                return new TeamStateModel
+                {
+                    TeamName = teamCode,
+                    Message = exc.Message,
+                    CipherCode = string.Empty,
+                    IsPlaceFound = false
+                };
+            }
+
             
-            return errorModel;
         }
 
         [HttpPost("SetPlaceCode")]
         public async Task<ActionResult<TeamStateModel>> SetPlaceCode([FromForm]string teamCode, [FromForm]string placeCode)
         {
             await LogActivity(teamCode, $"SetPlaceCode(teamCode:{teamCode}, placeCode: {placeCode})");
-
-            var (state, errorModel) = GetFirstUnresolvedState(teamCode);
-            if(state == null)
+            try
             {
-                return errorModel;
-            }
+                var (state, errorModel) = GetFirstUnresolvedState(teamCode);
+                if (state == null)
+                {
+                    await LogActivity(teamCode, $"SetPlaceCode returns: {errorModel}");
+                    return errorModel;
+                }
 
-            if(state.IsPlaceFound)
+                if (state.IsPlaceFound)
+                {
+                    await LogActivity(teamCode, $"SetPlaceCode returns: {errorModel}");
+                    return errorModel;
+                }
+
+                if (string.IsNullOrWhiteSpace(placeCode))
+                {
+                    errorModel.Message = "Není vyplněný kód stanoviště.";
+
+                    await LogActivity(teamCode, $"SetPlaceCode returns: {errorModel}");
+
+                    // we dont send cipherCode on this place
+                    errorModel.CipherCode = string.Empty;
+                    return errorModel;
+                }
+
+                if (state.Cipher.Place.ToUpper() == placeCode.ToUpper())
+                {
+                    state.IsPlaceFound = true;
+                    await _context.SaveChangesAsync();
+                    errorModel.IsPlaceFound = true;
+                    errorModel.Message = "Kód stanoviště je správný!";
+
+                    await LogActivity(teamCode, $"SetPlaceCode returns: {errorModel}");
+
+                    return errorModel;
+                }
+
+                errorModel.Message = "Kód stanoviště není správný";
+
+                await LogActivity(teamCode, $"SetPlaceCode returns: {errorModel}");
+
+                // we dont send cipherCode on this place
+                errorModel.CipherCode = string.Empty;
+                return errorModel;
+
+            }catch(Exception exc)
             {
-                // don't compare place core, return 
-                return errorModel;
-            }
+                await LogActivity(teamCode, $"Exception: {exc}");
 
-            if(string.IsNullOrWhiteSpace(placeCode))
-            {
-                errorModel.Message = "Není vyplněný kód stanoviště.";
-                return errorModel;
+                return new TeamStateModel
+                {
+                    TeamName = teamCode,
+                    Message = exc.Message,
+                    CipherCode = string.Empty,
+                    IsPlaceFound = false
+                };
             }
-
-            if(state.Cipher.Place.ToUpper() == placeCode.ToUpper())
-            {
-                state.IsPlaceFound = true;
-                await _context.SaveChangesAsync();
-                errorModel.IsPlaceFound = true;
-                errorModel.Message = "Kód stanoviště je správný!";
-                return errorModel;
-            }
-
-            errorModel.Message = "Kód stanoviště není správný";
-            return errorModel;
         }
 
         [HttpPost("SetCipherResult")]
@@ -69,28 +118,50 @@ namespace CipherGame.Controllers
         {
             await LogActivity(teamCode, $"SetCipherResult(teamCode:{teamCode}, result: {result})");
 
-            var (state, errorModel) = GetFirstUnresolvedState(teamCode);
-            if (state == null)
+            try
             {
-                return errorModel;
-            }
+                var (state, errorModel) = GetFirstUnresolvedState(teamCode);
+                if (state == null)
+                {
+                    await LogActivity(teamCode, $"SetCipherResult returns: {errorModel}");
+                    return errorModel;
+                }
 
-            if (!state.IsPlaceFound)
-            {
+                if (!state.IsPlaceFound)
+                {
+                    errorModel.Message = "Kód stanoviště není správný";
+
+                    await LogActivity(teamCode, $"SetCipherResult returns: {errorModel}");
+                    return errorModel;
+                }
+
+                if (state.Cipher.Answer.ToUpper() == result.ToUpper())
+                {
+                    state.IsAnswerFound = true;
+                    await _context.SaveChangesAsync();
+                    var (newState, newModel) = GetFirstUnresolvedState(teamCode);
+
+                    await LogActivity(teamCode, $"SetCipherResult returns: {errorModel}");
+                    return newModel;
+                }
+
                 errorModel.Message = "Kód stanoviště není správný";
+
+                await LogActivity(teamCode, $"SetCipherResult returns: {errorModel}");
                 return errorModel;
-            }
 
-            if (state.Cipher.Answer.ToUpper() == result.ToUpper())
+            }catch( Exception exc)
             {
-                state.IsAnswerFound = true;
-                await _context.SaveChangesAsync();
-                var (newState, newModel) = GetFirstUnresolvedState(teamCode);
-                return newModel;
-            }
+                await LogActivity(teamCode, $"Exception: {exc}");
 
-            errorModel.Message = "Kód stanoviště není správný";
-            return errorModel;
+                return new TeamStateModel
+                {
+                    TeamName = teamCode,
+                    Message = exc.Message,
+                    CipherCode = string.Empty,
+                    IsPlaceFound = false
+                };
+            }
         }
 
         private (GameState, TeamStateModel) GetFirstUnresolvedState(string teamCode)
@@ -134,6 +205,9 @@ namespace CipherGame.Controllers
                     TeamName = team.Name
                 });
             }
+
+            _context.Entry(unresolvedState).Reference(x => x.Cipher).Load();
+            _context.Entry(unresolvedState).Reference(x => x.Team).Load();
 
             return (unresolvedState, new TeamStateModel
             {
