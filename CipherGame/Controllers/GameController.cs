@@ -113,8 +113,8 @@ namespace CipherGame.Controllers
             }
         }
 
-        [HttpPost("SetCipherResult")]
-        public async Task<ActionResult<TeamStateModel>> SetCipherResult([FromForm]string teamCode, [FromForm]string result)
+            [HttpPost("SetCipherResult")]
+            public async Task<ActionResult<TeamStateModel>> SetCipherResult([FromForm]string teamCode, [FromForm]string result)
         {
             await LogActivity(teamCode, $"SetCipherResult(teamCode:{teamCode}, result: {result})");
 

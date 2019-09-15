@@ -9,7 +9,7 @@ function login() {
     url: url,
     data: { password: password },
     success: () => {
-      $("#msg").html("Přihlášení proběhlo úspěšně");
+        $("#msg").html("Přihlášení proběhlo úspěšně");
     }
   }).fail((jqXHR, textStatus, errorThrown) => {
     if (jqXHR.status == "400") {
