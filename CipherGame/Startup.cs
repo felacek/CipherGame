@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +32,13 @@ namespace CipherGame
         {
             services.AddScoped<CipherGameData.CipherGameContext, CipherGameData.CipherGameContext>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(options =>
+                    {
+                        options.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
+                        options.Events.OnRedirectToLogin = UnAuthorizedResponse;
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +48,6 @@ namespace CipherGame
             using (var client = new CipherGameData.CipherGameContext())
             {
                 client.Database.EnsureCreated();
-
             }
 
             if (env.IsDevelopment())
@@ -63,7 +73,16 @@ namespace CipherGame
                 await next();
             });
 
+            app.UseAuthentication();
+
             app.UseMvc();
+        }
+
+
+        internal static Task UnAuthorizedResponse(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return Task.CompletedTask;
         }
     }
 }

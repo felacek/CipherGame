@@ -15,7 +15,11 @@ function list() {
           "`)'>Delete Team</button><br />"
       );
     }
-  });
+  })
+      .fail(function (jqXHR, textStatus, errorThrown) {
+          if (jqXHR.status == '401') { window.location.href = "./index.html"; }
+          alert(textStatus);
+      });
 }
 
 function add() {
@@ -35,7 +39,11 @@ function add() {
     },
     contentType: "application/json",
     dataType: "json"
-  });
+  })
+      .fail(function (jqXHR, textStatus, errorThrown) {
+          if (jqXHR.status == '401') { window.location.href = "./index.html"; }
+          alert(textStatus);
+      });
 }
 
 function remove(code) {
@@ -45,5 +53,9 @@ function remove(code) {
     success: () => {
       list();
     }
-  });
+  })
+      .fail(function (jqXHR, textStatus, errorThrown) {
+          if (jqXHR.status == '401') { window.location.href = "./index.html"; }
+          alert(textStatus);
+      });
 }
