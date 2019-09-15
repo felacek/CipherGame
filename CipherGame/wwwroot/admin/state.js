@@ -54,5 +54,5 @@ function remove() {
 }
 
 $(document).ready(() => {
-  $.ajaxSetup({ xhrFields: { withCredentials: true } });
+  $.ajaxSetup({ xhrFields: { withCredentials: true }, crossDomain: true });
 });
