@@ -24,25 +24,28 @@ function signIn() {
       state.teamName = data.teamName;
       state.message = data.message;
       state.isPlaceFound = data.isPlaceFound;
+
+      //write message
+      sendMessage();
+
+      //if successful
+      if (state.teamName !== "") {
+        //set team name
+        $("#teamcode").html("");
+        $(".teamname").html("Přihlášen tým " + state.teamName);
+
+        //make cookie for easier signin next time
+        document.cookie = "teamCode="+state.teamCode+";max-age=7200";
+
+        //go to different webpage
+        if (state.isPlaceFound) {
+          goToResult();
+        } else {
+          goToPlace();
+        }
+      }
     }
   });
-
-  //write message
-  sendMessage();
-
-  //if successful
-  if (state.teamName !== "") {
-    //set team name
-    $("#teamcode").html("");
-    $(".teamname").html("Přihlášen tým " + state.teamName);
-
-    //go to different webpage
-    if (state.isPlaceFound) {
-      goToResult();
-    } else {
-      goToPlace();
-    }
-  }
 }
 
 function checkPlace() {
@@ -59,24 +62,23 @@ function checkPlace() {
     success: data => {
       state.message = data.message;
       state.isPlaceFound = data.isPlaceFound;
+      //write message
+      sendMessage();
+
+      //if successful
+      if (state.isPlaceFound) {
+        goToResult();
+      }
     }
   });
-
-  //write message
-  sendMessage();
-
-  //if successful
-  if (state.isPlaceFound) {
-    goToResult();
-  }
 }
 
 function checkResult() {
   //get input
-  state.result = $("cipher")
+  state.result = $("#cipher")
     .val()
     .toUpperCase();
-    
+
   //get team data
   $.ajax({
     url: url.concat("/SetCipherResult"),
@@ -85,16 +87,15 @@ function checkResult() {
     success: data => {
       state.message = data.message;
       state.isPlaceFound = data.isPlaceFound;
+      //write message
+      sendMessage();
+
+      //if successful
+      if (!state.isPlaceFound) {
+        goToPlace();
+      }
     }
   });
-
-  //write message
-  sendMessage();
-
-  //if successful
-  if (!state.isPlaceFound) {
-    goToPlace();
-  }
 }
 
 function goToPlace() {
