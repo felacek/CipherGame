@@ -70,7 +70,7 @@ namespace CipherGame.Controllers
 
                 if (string.IsNullOrWhiteSpace(placeCode))
                 {
-                    errorModel.Message = "Není vyplněný kód stanoviště.";
+                    errorModel.Message = "Není vyplněný kód stanoviště";
 
                     await LogActivity(teamCode, $"SetPlaceCode returns: {errorModel}");
 
@@ -79,7 +79,7 @@ namespace CipherGame.Controllers
                     return errorModel;
                 }
 
-                if (state.Cipher.Place.ToUpper() == placeCode.ToUpper())
+                if (state.Cipher.Code.ToUpper() == placeCode.ToUpper())
                 {
                     state.IsPlaceFound = true;
                     await _context.SaveChangesAsync();
@@ -129,7 +129,7 @@ namespace CipherGame.Controllers
 
                 if (!state.IsPlaceFound)
                 {
-                    errorModel.Message = "Kód stanoviště není správný";
+                    errorModel.Message = "Kód stanoviště ještě není vyplněn";
 
                     await LogActivity(teamCode, $"SetCipherResult returns: {errorModel}");
                     return errorModel;
@@ -145,7 +145,7 @@ namespace CipherGame.Controllers
                     return newModel;
                 }
 
-                errorModel.Message = "Kód stanoviště není správný";
+                errorModel.Message = "Špatná odpověď";
 
                 await LogActivity(teamCode, $"SetCipherResult returns: {errorModel}");
                 return errorModel;
@@ -183,7 +183,7 @@ namespace CipherGame.Controllers
             {
                 return (null, new TeamStateModel
                 {
-                    Message = $"Tým „{teamCode}“ nemá přidělenou žádnou Šifru.",
+                    Message = $"Tým „{team.Name}“ nemá přidělenou žádnou šifru",
                     CipherCode = String.Empty,
                     IsPlaceFound = false,
                     TeamName = team.Name
@@ -199,7 +199,7 @@ namespace CipherGame.Controllers
             {
                 return (null, new TeamStateModel
                 {
-                    Message = $"Tým „{teamCode}“ má vyřešeny všechny šifry.",
+                    Message = $"Tým „{team.Name}“ má vyřešeny všechny šifry.",
                     CipherCode = String.Empty,
                     IsPlaceFound = false,
                     TeamName = team.Name

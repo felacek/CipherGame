@@ -50,6 +50,7 @@ namespace CipherGame
             }
 
             app.UseHttpsRedirection();
+
             app.UseMvc();
         }
     }
