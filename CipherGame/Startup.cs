@@ -36,6 +36,8 @@ namespace CipherGame
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options =>
                     {
+                        // options.Cookie.Name = "auth_cookie";
+                        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
                         options.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
                         options.Events.OnRedirectToLogin = UnAuthorizedResponse;
                     });
@@ -65,13 +67,26 @@ namespace CipherGame
             {
                 context.Response.OnStarting(() =>
                 {
-                    context.Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-                    context.Response.Headers.Add("Pragma", "no-cache"); // HTTP 1.0.
-                    context.Response.Headers.Add("Expires", "0"); // Proxies.
+                    if(!context.Response.Headers.ContainsKey("Cache-Control"))
+                        context.Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+
+                    if (!context.Response.Headers.ContainsKey("Pragma"))
+                        context.Response.Headers.Add("Pragma", "no-cache"); // HTTP 1.0.
+
+                    if (!context.Response.Headers.ContainsKey("Expires"))
+                        context.Response.Headers.Add("Expires", "0"); // Proxies.
                     return Task.FromResult(0);
                 });
                 await next();
             });
+
+            app.UseCors(policy =>
+           {
+               policy.AllowAnyHeader();
+               policy.AllowAnyMethod();
+               policy.AllowAnyOrigin();
+               policy.AllowCredentials();
+           });
 
             app.UseAuthentication();
 

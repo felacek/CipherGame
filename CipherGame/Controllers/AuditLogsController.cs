@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CipherGame.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuditLogsController : ControllerBase

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CipherGame.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     [Route("api/[controller]")]
     [ApiController]
     public class CiphersController : ControllerBase
