@@ -1,11 +1,4 @@
-﻿<?php
-
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-?>
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
@@ -120,6 +113,6 @@ header("Pragma: no-cache");
       <div class="msg"></div>
     </form>
 
-    <script src="js/main.js" async defer></script>
+    <script src="js/main.js?random=<?php echo uniqid(); ?>" async defer></script>
   </body>
 </html>
