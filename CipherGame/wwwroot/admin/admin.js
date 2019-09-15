@@ -12,7 +12,7 @@ function login() {
       $("#msg").html("Přihlášení proběhlo úspěšně");
     }
   }).fail((jqXHR, textStatus, errorThrown) => {
-    if (jqXHR.status == "401") {
+    if (jqXHR.status == "400") {
       $("#msg").html("Špatné heslo");
     }
   });
