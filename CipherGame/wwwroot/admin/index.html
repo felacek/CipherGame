@@ -5,13 +5,19 @@
 <!--[if gt IE 8]><!-->
 <html class="no-js">
   <!--<![endif]-->
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Správa</title>
     <meta name="description" content="Šifrovačka ŠvP Štúrovo" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
+
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
+      crossorigin="anonymous"
+    ></script>
+  </head>
   <body>
     <!--[if lt IE 7]>
       <p class="browsehappy">
@@ -20,6 +26,18 @@
       </p>
     <![endif]-->
     <h1>Správa Šifrovačky</h1>
+    <form id="pass" onsubmit="login(); return false">
+      <label for="word">Password</label>
+      <input id="word" type="password" placeholder="Heslo" required="" />
+      <br />
+      <input type="submit" value="Autentifikace" />
+    </form>
+
+    <input type="button" onclick="logout()" value="Odhlášení" />
+    <br />
+    <p id="msg"></p>
+
+    <br />
     <a href="./teams.html">Správa Týmů</a>
     <br />
     <a href="./ciphers.html">Správa Šifer</a>
@@ -27,5 +45,7 @@
     <a href="./state.html">Správa Stavu</a>
     <br />
     <a href="./log.html">Výpis</a>
+
+    <script src="admin.js" async defer></script>
   </body>
 </html>

@@ -34,9 +34,6 @@ function signIn() {
         $("#teamcode").html("");
         $(".teamname").html("Přihlášen tým " + state.teamName);
 
-        //make cookie for easier signin next time
-        document.cookie = "teamCode="+state.teamCode+";max-age=7200";
-
         //go to different webpage
         if (state.isPlaceFound) {
           goToResult();

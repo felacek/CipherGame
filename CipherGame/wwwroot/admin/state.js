@@ -17,21 +17,23 @@ function list() {
           "</p><br />"
       );
     }
-  })
-      .fail(function (jqXHR, textStatus, errorThrown) {
-          if (jqXHR.status == '401') { window.location.href = "./index.html"; }
-          alert(textStatus);
-      });
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    if (jqXHR.status == "401") {
+      window.location.href = "./index.html";
+    }
+    alert(textStatus);
+  });
 }
 
 function gen() {
   $.post(url, () => {
     list();
-  })
-      .fail(function (jqXHR, textStatus, errorThrown) {
-          if (jqXHR.status == '401') { window.location.href = "./index.html"; }
-          alert(textStatus);
-      });
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    if (jqXHR.status == "401") {
+      window.location.href = "./index.html";
+    }
+    alert(textStatus);
+  });
 }
 
 function remove() {
@@ -42,10 +44,11 @@ function remove() {
       success: () => {
         list();
       }
-    })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status == '401') { window.location.href = "./index.html"; }
-            alert(textStatus);
-        });
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      if (jqXHR.status == "401") {
+        window.location.href = "./index.html";
+      }
+      alert(textStatus);
+    });
   }
 }
