@@ -62,3 +62,7 @@ function remove(code) {
     alert(textStatus);
   });
 }
+
+$(document).ready(() => {
+  $.ajaxSetup({ xhrFields: { withCredentials: true } });
+});

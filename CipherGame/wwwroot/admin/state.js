@@ -52,3 +52,7 @@ function remove() {
     });
   }
 }
+
+$(document).ready(() => {
+  $.ajaxSetup({ xhrFields: { withCredentials: true } });
+});

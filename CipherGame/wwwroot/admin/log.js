@@ -29,3 +29,7 @@ function remove() {
     alert(textStatus);
   });
 }
+
+$(document).ready(() => {
+  $.ajaxSetup({ xhrFields: { withCredentials: true } });
+});
