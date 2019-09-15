@@ -10,8 +10,6 @@ function login() {
     data: { password: password },
     success: () => {
         $("#msg").html("Přihlášení proběhlo úspěšně");
-        console.log("cookie", document.cookie);
-        console.log("jq cookie", $.cookie(".AspNetCore.Cookies"));
     }
   }).fail((jqXHR, textStatus, errorThrown) => {
     if (jqXHR.status == "401") {

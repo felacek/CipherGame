@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CipherGame.Controllers
 {
@@ -17,8 +18,15 @@ namespace CipherGame.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromForm]string password)
         {
+            var hash = ComputeSha256Hash(password ?? string.Empty);
+            if(hash != "8efde3e99640d282620c8caf8791acfcf44412f36a4aa832aa5b7dc2ed25f5be")
+            {
+                return BadRequest();
+            }
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Name, "Administrator"),
+                new Claim(ClaimTypes.NameIdentifier, "Admnistrator"),
                 new Claim(ClaimTypes.Role, "Administrator"),
             };
 
@@ -29,30 +37,35 @@ namespace CipherGame.Controllers
             {
                 AllowRefresh = true,
 
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60),
 
                 IsPersistent = true,
-                
-                //IssuedUtc = <DateTimeOffset>,
-                // The time at which the authentication ticket was issued.
-
-                //RedirectUri = <string>
-                // The full path or absolute URI to be used as an http 
-                // redirect response value.
             };
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+                new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return Ok();
         }
 
-        [HttpPost("Logout")]
-        public IActionResult Logout()
+
+        static string ComputeSha256Hash(string rawData)
         {
-            return Ok();
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
     }
 }
